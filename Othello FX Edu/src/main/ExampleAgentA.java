@@ -52,8 +52,8 @@ public class ExampleAgentA extends Agent{
         long startTime = System.currentTimeMillis();
         int maxSearchTime = 5000; // 5 seconds in milliseconds
 
-        List<GameBoardState> childStates = gameState.generateChildStates(gameState);
-        gameState.addChildStates(childStates.toArray(new GameBoardState[0]));
+        //List<GameBoardState> childStates = gameState.generateChildStates(gameState);
+        //gameState.addChildStates(childStates.toArray(new GameBoardState[0]));
 
         int bestScore = this.getPlayerTurn() == PlayerTurn.PLAYER_ONE ? Integer.MIN_VALUE : Integer.MAX_VALUE;
         MoveWrapper bestMoveWrapper = null;
