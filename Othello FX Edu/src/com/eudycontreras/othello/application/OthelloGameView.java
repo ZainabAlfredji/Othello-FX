@@ -559,6 +559,7 @@ public class OthelloGameView{
 
 		@Override
 		public void displayInformation(int depthCounter, int leafCounter, int pruneCounter, int nodesExamined) {
+			System.out.println("Updating GUI with depthCounter: " + depthCounter);
 			gameInfoView.updateInfo(1, String.valueOf(depthCounter));
 			gameInfoView.updateInfo(2, String.valueOf(pruneCounter));
 			gameInfoView.updateInfo(3, String.valueOf(leafCounter));

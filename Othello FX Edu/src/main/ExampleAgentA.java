@@ -3,136 +3,143 @@ package main;
 import java.util.List;
 
 import com.eudycontreras.othello.capsules.AgentMove;
-import com.eudycontreras.othello.controllers.AgentController;
+import com.eudycontreras.othello.capsules.MoveWrapper;
+import com.eudycontreras.othello.capsules.ObjectiveWrapper;
 import com.eudycontreras.othello.controllers.Agent;
+import com.eudycontreras.othello.controllers.AgentController;
+import com.eudycontreras.othello.controllers.GameController;
+import com.eudycontreras.othello.enumerations.BoardCellState;
+import com.eudycontreras.othello.enumerations.BoardCellType;
 import com.eudycontreras.othello.enumerations.PlayerTurn;
 import com.eudycontreras.othello.models.GameBoardState;
 import com.eudycontreras.othello.threading.ThreadManager;
 import com.eudycontreras.othello.threading.TimeSpan;
 
-/**
- * <H2>Created by</h2> Eudy Contreras
- * <h4> Mozilla Public License 2.0 </h4>
- * Licensed under the Mozilla Public License 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <a href="https://www.mozilla.org/en-US/MPL/2.0/">visit Mozilla Public Lincense Version 2.0</a>
- * <H2>Class description</H2>
- * 
- * @author Eudy Contreras
- */
 public class ExampleAgentA extends Agent{
-	
-	private ExampleAgentA() {
-		super(PlayerTurn.PLAYER_ONE);
-		// TODO Auto-generated constructor stub
+
+    //private PlayerTurn player_turn = PlayerTurn.PLAYER_ONE;
+
+    private GameController gameController;
+    private GameBoardState gameBoardState;
+
+    public ExampleAgentA(GameController gameController) {
+		this(gameController, PlayerTurn.PLAYER_ONE);
 	}
 	
-	private ExampleAgentA(PlayerTurn playerTurn) {
+	public ExampleAgentA(String name) {
+		super(name, PlayerTurn.PLAYER_ONE);
+	}
+	
+	public ExampleAgentA(GameController gameController, PlayerTurn playerTurn) {
 		super(playerTurn);
-		// TODO Auto-generated constructor stub
+        this.gameController = gameController;
 	}
 
-	/**
-	 * Delete the content of this method and Implement your logic here!
-	 */
-	@Override
-	public AgentMove getMove(GameBoardState gameState) {
-		return getExampleMove(gameState);
-	}
-	
-	/**
-	 * Default template move which serves as an example of how to implement move
-	 * making logic. Note that this method does not use Alpha beta pruning and
-	 * the use of this method can disqualify you
-	 * 
-	 * @param gameState
-	 * @return
-	 */
-	private AgentMove getExampleMove(GameBoardState gameState){
-		/*int depth = 3; // Define your depth limit
-        AgentMove bestMove = null;
-        int bestScore = Integer.MIN_VALUE;
-        int alpha = Integer.MIN_VALUE;
-        int beta = Integer.MAX_VALUE;
-
-		// Use AgentController to generate possible moves
-        List<AgentMove> possibleMoves = AgentController.generateMoves(gameState, getPlayerTurn());
-
-        for (AgentMove move : possibleMoves) {
-            GameBoardState newState = gameState.applyMove(move);
-            int score = minimax(newState, depth - 1, alpha, beta, false);
-
-            if (score > bestScore) {
-                bestScore = score;
-                bestMove = move;
-            }
-        }
-
-        return bestMove;*/
-		int waitTime = UserSettings.MIN_SEARCH_TIME; // 1.5 seconds
-		
-		ThreadManager.pause(TimeSpan.millis(waitTime)); // Pauses execution for the wait time to cause delay
-		
-		return AgentController.getExampleMove(gameState, playerTurn); // returns an example AI move Note: this is not AB Pruning
-	}
-
-	private int minimax(GameBoardState position, int depth, int alpha, int beta,  boolean maximizingPlayer){
-		if(depth == 0 || position.isTerminal()){
-			//return static evalutaion of position
-		}
-		if(maximizingPlayer){
-			//int maxEval = Integer.MIN_VALUE
-			//for each child of position
-			//int eval = minimax(child, depth - 1, alpha, beta, false)
-			//maxEval = Math.max(maxEval, eval)
-			//alpha = Math.max(alpha, eval)
-			//if(beta <= alpha){break}
-			//return maxEval
-		} else {
-			//int minEval = Integer.MAX_VALUE
-			//for each child of position
-			//int eval = minimax(child, depth - 1, alpha, beta, true)
-			//minEval = Math.min(maxEval, eval)
-			//beta = Math.min(beta, eval)
-			//if(beta <= alpha){break}
-			//return minEval
-		}
-	}
-
-	/*private int minimax(GameBoardState state, int depth, int alpha, int beta, boolean maximizingPlayer) {
-        if (depth == 0 || state.isTerminal()) {
-            return AgentController.evaluate(state, getPlayerTurn());
-        }
-
-        if (maximizingPlayer) {
-            int maxEval = Integer.MIN_VALUE;
-            for (AgentMove move : AgentController.generateMoves(state, getPlayerTurn())) {
-                GameBoardState newState = state.applyMove(move);
-                int eval = minimax(newState, depth - 1, alpha, beta, false);
-                maxEval = Math.max(maxEval, eval);
-                alpha = Math.max(alpha, eval);
-                if (beta <= alpha)
-                    break;
-            }
-            return maxEval;
-        } else {
-            int minEval = Integer.MAX_VALUE;
-            for (AgentMove move : AgentController.generateMoves(state, getOpponentTurn())) {
-                GameBoardState newState = state.applyMove(move);
-                int eval = minimax(newState, depth - 1, alpha, beta, true);
-                minEval = Math.min(minEval, eval);
-                beta = Math.min(beta, eval);
-                if (beta <= alpha)
-                    break;
-            }
-            return minEval;
-        }
+    @Override
+    public AgentMove getMove(GameBoardState gameState) {
+        resetCounters();
+        return getABpruningMove(gameState);
+        
     }
 
-    private PlayerTurn getOpponentTurn() {
-        return getPlayerTurn() == PlayerTurn.PLAYER_ONE ? PlayerTurn.PLAYER_TWO : PlayerTurn.PLAYER_ONE;
-    }*/
+
+    private AgentMove getABpruningMove(GameBoardState gameState) {
+        int waitTime = UserSettings.MIN_SEARCH_TIME; // 1.5 seconds
+		ThreadManager.pause(TimeSpan.millis(waitTime));
+
+        //setSearchDepth(UserSettings.MAX_SEARCH_DEPTH);
+
+        long startTime = System.currentTimeMillis();
+        int maxSearchTime = 5000; // 5 seconds in milliseconds
+
+        List<GameBoardState> childStates = gameState.generateChildStates(gameState);
+        gameState.addChildStates(childStates.toArray(new GameBoardState[0]));
+
+        int bestScore = this.getPlayerTurn() == PlayerTurn.PLAYER_ONE ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+        MoveWrapper bestMoveWrapper = null;
+
+        List<ObjectiveWrapper> possibleMoves = AgentController.getAvailableMoves(gameState, this.getPlayerTurn());
+
+        for (ObjectiveWrapper move : possibleMoves) {
+            GameBoardState newState = AgentController.getNewState(gameState, move);
+            int score = AB_pruning(newState, UserSettings.MAX_SEARCH_DEPTH, Integer.MIN_VALUE, Integer.MAX_VALUE, this.getPlayerTurn() != PlayerTurn.PLAYER_ONE);
+
+            if ((this.getPlayerTurn() == PlayerTurn.PLAYER_ONE && score > bestScore) || 
+                (this.getPlayerTurn() != PlayerTurn.PLAYER_ONE && score < bestScore)) {
+                bestScore = score;
+                bestMoveWrapper = new MoveWrapper(move);
+            }
+
+            if (AgentController.timeLimitExceeded(maxSearchTime, startTime)) {
+                break; // Stop searching if time limit exceeded
+            }
+        }
+
+        return bestMoveWrapper;
+
+    }
+
+    private int AB_pruning(GameBoardState node, int search_depth, int alpha, int beta, boolean max_player) {
+        setNodesExamined(getNodesExamined() + 1);
+        System.out.println("AB_pruning called - max_player: " + max_player);
+
+        int currentDepth = UserSettings.MAX_SEARCH_DEPTH - search_depth;
+        setSearchDepth(Math.max(getSearchDepth(), currentDepth));
+        System.out.println("AB_pruning called - Search Depth: " + search_depth + ", Current Depth: " + currentDepth);
 
 
+        if (search_depth == 0 || node.isTerminal())
+        {
+            setReachedLeafNodes(getReachedLeafNodes() + 1);
+            System.out.println("Leaf Node Reached - Depth: " + currentDepth + ", Total Leaf Nodes: " + getReachedLeafNodes());
+            return (int) node.getStaticScore(max_player ? BoardCellState.WHITE : BoardCellState.BLACK);
+        } 
+       
+        System.out.println("Number of child states: " + node.getChildStates().size());
+        if(max_player)
+        {
+            int max_evaluation = Integer.MIN_VALUE;
+            
+
+            for (GameBoardState child : node.getChildStates())
+            {
+                System.out.println("Going deeper - Current Depth: " + (UserSettings.MAX_SEARCH_DEPTH - (search_depth - 1)));
+                int evaluation = AB_pruning(child, search_depth - 1, alpha, beta, !max_player);
+                max_evaluation = Math.max(max_evaluation, evaluation);
+                alpha = Math.max(alpha, evaluation);
+                if (alpha >= beta)
+                {
+                    setPrunedCounter(getPrunedCounter() + 1);
+                    System.out.println("Pruning at Min - Depth: " + currentDepth + ", Total Prunes: " + getPrunedCounter());
+                    break;
+                }
+            }
+            
+            return max_evaluation;
+        }
+        else
+        {
+            int min_evaluation = Integer.MAX_VALUE;
+           
+            for (GameBoardState child : node.getChildStates())
+            {
+                int evaluation = AB_pruning(child, search_depth - 1, alpha, beta, !max_player);
+
+                min_evaluation = Math.min(min_evaluation, evaluation);
+                beta = Math.min(beta, evaluation);
+                if(alpha >= beta)
+                {
+                    setPrunedCounter(getPrunedCounter() + 1);
+                    System.out.println("Pruning at Min - Depth: " + currentDepth + ", Total Prunes: " + getPrunedCounter());
+                    break;
+                }
+            }
+            
+            return min_evaluation;
+        }
+        
+        
+    }
+    
+    
 }

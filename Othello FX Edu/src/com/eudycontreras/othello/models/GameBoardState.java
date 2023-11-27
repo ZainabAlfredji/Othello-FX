@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.eudycontreras.othello.capsules.MoveWrapper;
 import com.eudycontreras.othello.capsules.ObjectiveWrapper;
+import com.eudycontreras.othello.controllers.AgentController;
 import com.eudycontreras.othello.enumerations.BoardCellState;
 import com.eudycontreras.othello.utilities.GameBoardUtility;
 import com.eudycontreras.othello.utilities.GameTreeUtility;
@@ -135,11 +136,26 @@ public class GameBoardState {
 	 * @return
 	 */
 	public List<GameBoardState> getChildStates() {
+		//List<GameBoardState> childStates = new ArrayList<>();
 		return childStates;
 	}
 	
 	public List<GameBoardState> getChildStates(BoardCellState state){
 		//return childStates.stream().filter(s-> s.getPlayerTurn() == state).collect(Collectors.toList());
+		List<GameBoardState> childStates = new ArrayList<>();
+		return childStates;
+	}
+
+	public List<GameBoardState> generateChildStates(GameBoardState gameBoardState){
+		//return childStates.stream().filter(s-> s.getPlayerTurn() == state).collect(Collectors.toList());
+		List<GameBoardState> childStates = new ArrayList<>();
+		List<ObjectiveWrapper> possibleMoves = AgentController.getAvailableMoves(gameBoardState, null);// Implement this method
+
+    	for (ObjectiveWrapper move : possibleMoves) {
+        // Create a new state based on applying this move
+        GameBoardState newState = AgentController.getNewState(gameBoardState, move); // Implement this method
+        childStates.add(newState);
+    }
 		return childStates;
 	}
 	

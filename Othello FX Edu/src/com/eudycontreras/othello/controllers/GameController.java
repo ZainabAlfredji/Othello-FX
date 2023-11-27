@@ -683,4 +683,5 @@ public class GameController {
 	public void passInformation(int depthCounter, int leafCounter, int pruneCounter, int nodesExamined) {
 		callbackController.displayInformation(depthCounter, leafCounter, pruneCounter, nodesExamined);
 	}
+	
 }

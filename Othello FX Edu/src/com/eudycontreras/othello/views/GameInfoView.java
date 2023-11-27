@@ -79,7 +79,7 @@ public class GameInfoView extends VBox {
 		infoPanels[0].getChildren().add(0, graphic);
 		
 		infoContent[0].setFont(Font.font(null, FontWeight.BOLD, 18));
-    	infoContent[0].setText("State of game");
+    	infoContent[0].setText("Human VS AI");
 		
     	infoPanels[5].setPrefHeight(100 + (50 * 4));
     	
