@@ -44,10 +44,8 @@ public class ExampleAgentA extends Agent{
 
 
     private AgentMove getABpruningMove(GameBoardState gameState) {
-        int waitTime = UserSettings.MIN_SEARCH_TIME; // 1.5 seconds
-		ThreadManager.pause(TimeSpan.millis(waitTime));
 
-        //setSearchDepth(UserSettings.MAX_SEARCH_DEPTH);
+        //setSearchDepth(8);
 
         long startTime = System.currentTimeMillis();
         int maxSearchTime = 5000; // 5 seconds in milliseconds
@@ -87,6 +85,8 @@ public class ExampleAgentA extends Agent{
         setSearchDepth(Math.max(getSearchDepth(), currentDepth));
         System.out.println("AB_pruning called - Search Depth: " + search_depth + ", Current Depth: " + currentDepth);
 
+
+       
 
         if (search_depth == 0 || node.isTerminal())
         {
